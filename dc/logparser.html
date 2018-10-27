@@ -1,0 +1,323 @@
+<html>
+    
+    <head>
+        <meta charset="utf-8">
+        <title>D&amp;C :: Обработчик логов</title>
+        <style type="text/css">
+            body {
+                margin:0;
+                padding:12;
+                border:none;
+                color:white;
+                background-color:black;
+                background-image:url("https://static.the-game.ru/static/img/pageback_s1.jpg");
+                background-position:top left;
+                scrollbar-arrow-color:white;
+                scrollbar-base-color:black;
+                scrollbar-face-color:black
+            }
+            table {
+                width:100%;
+                height:100%;
+                margin:0;
+                padding:0;
+                border:none;
+                border-collapse:collapse
+            }
+            tr, th, td {
+                font:normal 9pt Georgia, Times;
+                margin:0;
+                padding:0
+            }
+            td.m {
+                padding:12 12 0 12;
+                text-align:center;
+                vertical-align:bottom
+            }
+            td.s {
+                width:170;
+                text-align:right
+            }
+            table.folio {
+                width:100%;
+                height:100%;
+                border-collapse:separate
+            }
+            table.folio th.l {
+                background-image:url("http://www.the-game.ru/static/img/wnd_corner.gif");
+                background-position:top left
+            }
+            table.folio th.m {
+                width:100%;
+                font:bold 7.5pt Verdana, Tahoma, Arial, Helvetica;
+                text-align:left;
+                border-top:solid 1px #999999;
+                background-color:#666666;
+                white-space:nowrap
+            }
+            table.folio th.i {
+                font:normal 9pt Verdana, Tahoma, Arial, Helvetica;
+                border-top:solid 1px #999999;
+                background-color:#666666;
+                white-space:nowrap;
+                padding-right:6
+            }
+            table.folio th.r {
+                text-align:right;
+                padding-right:6;
+                border-top:solid 1px #999999;
+                border-right:solid 1px #999999;
+                background-color:#666666
+            }
+            table.folio td.i {
+                text-align:right;
+                border:solid 1px #999999;
+                border-top:none
+            }
+            div.s {
+                width:12
+            }
+            div.m {
+                width:36;
+                height:100%;
+                text-align:center;
+                vertical-align:top;
+                padding-top:6
+            }
+            img {
+                border:none
+            }
+            textarea {
+                width:100%;
+                height:100%;
+                padding:12;
+                font:normal 9pt Georgia, Times;
+                color:white;
+                border:none;
+                background-image:url("https://static.the-game.ru/static/img/pageback_s1.jpg");
+                background-position:bottom right
+            }
+            a {
+                color:#66ccff;
+                text-decoration:none
+            }
+            a:hover {
+                color:#99ffff;
+                text-decoration:underline
+            }
+        </style>
+        <script type="text/javascript">
+            peniculli = {
+                "titulus": "",
+                "ratio": "color:#66ccff",
+                "abacus": "border:none;width:540",
+                "numerus": "\"border:none;border-bottom:solid 1px #999999;text-align:right;padding-left:22\"",
+                "majoris": "\"border:none;border-bottom:solid 1px #999999\"",
+                "minoris": "border:none;text-align:right;padding-left:22;font-size" + ":70%;color:#909090;font-weight:bold;width:100",
+                "invisia": "border:none",
+                "punga": "color:#3399cc",
+                "circum": "color:#006699",
+                "delendum": "color:#ff3333",
+                "amissae": "color:#ff6666"
+            };
+
+            function em(x) {
+                return (document.getElementById(x))
+            }
+            function trim(s) {
+                var c = s.replace(/^[\s\n]+/, "").replace(/[\s\n]+$/, "");
+                return (c)
+            }
+            function op_titulus(s) {
+                var a = s.indexOf("?Союзники сообщают:");
+                if (-1 == a) a = s.indexOf("В системе");
+                if (-1 == a) return ("");
+                var c = trim(s.substring(0, a)).replace(/.*\n/g, "");
+                if ("" == c) c = "Н" + s.substring(s.indexOf("наши войска ") + 1, s.indexOf("." + " Против"));
+                var t = s.substring(0, s.indexOf("В системе")).
+                match(/\d{4}-\d{1,2}-\d{1,2}\s+\d{1,2}:\d{1,2}:\d{1,2}/);
+                if (t) c += t[0].replace(/(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{1,2}):(\d{1,2})/, " ($3.$2.$1, $4:$5)");
+                c = "[" + "spoiler=" + c + "]";
+                return (c)
+            }
+            function op_ratio(s) {
+                var a = s.indexOf("Союзники сообщают:");
+                if (-1 == a) a = s.indexOf("В системе");
+                var b = s.
+                indexOf("\n", a + 1);
+                var c = trim(s.substring(a, b)).replace(/(В системе)\s+(.*)\s+(наши)/, "$1 [" + "style=" + peniculli["ratio"] + "]$2[" + "/style] $3");
+                return (c)
+            }
+            function op_ludii(s) {
+                var a = s.indexOf("выступили:", 0) + "выступили:".length;
+                var b = s.indexOf("Результаты");
+                var c = trim(s.substring(a, b));
+                c = "[" + "ul]\n" + c;
+                c = c.replace(/\n(\*\s*)?([^,]*),/g, "\n[" + "player]$2[" + "/player],");
+                c = c.replace(/\[player\](В союзе.*\n)(\*\s*)?/, "[" + "/ul]\n$1[" + "ul]\n" + "[" + "player]");
+                c = trim(c) + "\n[" + "/ul]";
+                return (c)
+            }
+            function op_praecessi(s) {
+                var a = s.indexOf("Результаты");
+                var b = s.indexOf("Наши потери");
+                if (-1 == b) b = s.indexOf("Потери пр" + "отивника");
+                if (-1 == b) b = s.indexOf("Подробный лог");
+                if (-1 == b) b = s.length;
+                var c = trim(s.substring(a, b)) + " ";
+                c = c.replace(/\n([^0-9-]+)/g, "\n$1|");
+                c = c.replace(/ ([0-9-]{1,2})([ \n])/g, "|$1$2");
+                c = c.split("\n");
+                for (var i = 1; i < c.length; i++) {
+                    xa = c[i].indexOf("|") + 1;
+                    xc = c[i].substr(xa);
+                    n = c[i].replace(/[^\|]/g, "").
+                    length;
+                    if (1 == n) xb = xc.indexOf(" ", (xc.length >> 1) - 1)
+                    else xb = xc.indexOf("|");
+                    xc = "| style=" + peniculli["numerus"] + " | " + xc.substring(0, xb) + " || style=" + peniculli["numerus"] + " | " + xc.substring(xb + 2) + "\n|-";
+                    c[i] = "| style=" + peniculli["majoris"] + " | " + c[i].substring(0, xa) + xc
+                };
+                c[0] = "Результаты сражения:\n[" + "table] style=" + peniculli["abacus"] + "\n| style=" + peniculli["invisia"] + " | 0 || style=" + peniculli["minoris"] + " | Мы || style=" + peniculli["minoris"] + " | Враг\n|-";
+                c[c.length - 1] = c[c.length - 1].substring(0, c[c.length - 1].length - 3);
+                c = c.join("\n") + "\n[" + "/table]";
+                return (c)
+            }
+            function op_amissi(s) {
+                var a = s.
+                indexOf("Наши потери");
+                if (-1 == a) a = s.indexOf("Потери противника");
+                var b = s.indexOf("Подробный лог");
+                if (-1 == a || -1 == b) return ("");
+                var c = trim(s.substring(a, b));
+                var x = "";
+                var y = "|| style=" + peniculli["numerus"] + " | ";
+                c = trim(c).split("\n");
+                for (var i = 0; i < c.length; i++) {
+                    if ("Потери противника" == trim(c[i])) {
+                        x = " " + "colspan=2 ";
+                        y = ""
+                    } else c[i] = c[i].replace(/^(.*) ([0-9| ]+)$/g, "| " + x + "style=" + peniculli["majoris"] + "| $1 || style=" + peniculli["numerus"] + "| $2 " + y + "\n|-")
+                };
+                c[0] = "Потери сторон:\n[" + "table] style=" + peniculli["abacus"] + "\n| style=" + peniculli["invisia"] + " | 0 || style=" + peniculli["minoris"] + " | Мы || " + "style=" + peniculli["minoris"] + " | Враг\n|-";
+                c[c.length - 1] = c[c.length - 1].substring(0, c[c.length - 1].length - 3);
+                c = c.join("\n").replace(/Потери противника.*\n/, "") + "\n[" + "/table]";
+                return (c)
+            }
+            function op_nuntio(s) {
+                var a = s.indexOf("Подробный лог");
+                var b = s.length;
+                if (-1 == a || -1 == b) return ("");
+                var c = trim(s.
+                substring(a, b));
+                c = c.replace(/(Подробный лог боя)/, "[" + "spoiler=$1]");
+                c = c.replace(/(Схватка) \#([0-9]+)/g, "[" + "style=" + peniculli["punga"] + "]$1 № $2[" + "/style]");
+                c = c.replace(/(Профильный цикл) \(([0-9]+)\)/g, "[" + "style=" + peniculli["circum"] + "]$1 ($2)[" + "/style]") + "\n";
+                c = c.replace(/(Непрофильный цикл) \(([0-9]+)\)/g, "[" + "style=" + peniculli["circum"] + "]$1 ($2)[" + "/style]") + "\n";
+                c = c.replace(/» (.*) ([«\(].*) « ([0-9\.]+)\/([0-9\.]+)\n/g, "» [" + "style=" + peniculli["amissae"] + "]$1[" + "/style] $2 « $3 / [" + "style=" + peniculli["amissae"] + "]$4[" + "/style]\n");
+                c = c.replace(/Ф(лот разгромлен):\n/g, "[" + "style=" + peniculli["delendum"] + "]Наш ф$1[" + "/style]\n");
+                c = c.replace(/(Флот разгромлен:.+)\n/g, "[" + "style=" + peniculli["delendum"] + "]$1[" + "/style]\n");
+                c += "[" + "/spoiler]\n" + trim(s.substr(b));
+                return (c)
+            }
+            function op_facio() {
+                var s = em("t1").value;
+                var c = "";
+                if (-1 != s.indexOf("[spoi" + "ler=")) c = s;
+                else {
+                    s = s.replace(/[\n\r]+/g, "\n").replace(/[ \t]+/g, " ").replace(/\s+([\:\,\.])/g, "$1").replace("[", "(").replace("]", ")").replace(/\s*\n\s*/g, "\n").replace(/[\u25c4\<]/g, "«").replace(/[\u25ba\>]/g, "»").replace(/«\u2013/g, "«—").replace(/\u2013»/g, "—»");;
+                    c = op_titulus(s);
+                    if ("" != c) c += "\n" + op_ratio(s) + "\n" + op_ludii(s) + "\n" + op_praecessi(s) + "\n\n" + op_amissi(s) + "\n\n" + op_nuntio(s) 
+                        + "[" + "dstyle=font-size:60%;text-align: right;]using LogParser by Lord Locus\n" 
+                        + "[" + "url]http://jlblc.droppages.com/dc/logparser[/url][/dstyle]" + "[" + "/spoiler]"
+                };
+                em("t2").value = c
+            }
+            function op_omni() {
+                op_suggero("t1");
+                op_facio();
+                op_effingo("t2")
+            }
+            function op_suggero(x) {
+                if (!window.clipboardData) return;
+                var c = window.clipboardData.getData("Text");
+                if (null == c || -1 == c.indexOf("В системе")) window.alert("В буфере обмена нет текста, похожего на лог боя.");
+                else em(x).value = c
+            }
+            function op_effingo(x) {
+                if (!window.clipboardData) return;
+                if (em(x).value.length > 0) window.clipboardData.setData("Text", em(x).value)
+            }
+            function op_purgo(x) {
+                em(x).value = ""
+            }
+            function op_probo_vel_celo(x) {
+                if ("none" == em(x).style.display) em(x).style.display = "inline";
+                else em(x).style.display = "none"
+            }
+            function op_initio() {
+                var s = new Array("a1", "a2", "d1", "d2");
+                if (!window.clipboardData) for (var i in s) op_probo_vel_celo(s[i])
+            }
+        </script>
+    </head>
+    
+    <body>
+        <table>
+            <tr>
+                <td width=50%>
+                    <table class="folio" cellspacing=0>
+                        <tr height=25>
+                            <th class="l">
+                                <div class="s"></div>
+                                <th class="m">Вставьте лог боя сюда…
+                                    <th class="i">
+                                        <a id="a1" href="javascript:op_suggero('t1')" title="Вставить из буфера">[+]</a>
+                                        <div id="d1" style="display:none;cursor:pointer" title="Вставить из буфера. Работает только в IE">[+]</div>&nbsp;
+                                        <a href="javascript:op_purgo('t1')" title="Очистить окно"
+                                        alt="Очистить окно">[x]</a>
+                                        <th class="r">
+                                            <img src="http://www.the-game.ru/static/img/logo_small.gif">
+                                            <tr>
+                                                <td colspan=4 class="i">
+                                                    <textarea id="t1"></textarea>
+                    </table>
+                    <td style="vertical-align:top">
+                        <div class="m">
+                            <a href="javascript:op_omni()" title="Кнопка для ленивых">»»</a>
+                        </div>
+                        <td width=50%>
+                            <table class="folio" cellspacing=0>
+                                <tr height=25>
+                                    <th class="l">
+                                        <div class="s"></div>
+                                        <th class="m">…И после обработки заберите отсюда
+                                            <th class="i">
+                                                <a id="a2" href="javascript:op_effingo('t2')" title="Копировать в буфер">[~]</a>
+                                                <div id="d2" style="display:none;cursor:pointer" title="Копировать в буфер. Работает только в IE">[~]</div>&nbsp;
+                                                <a href="javascript:op_purgo('t2')" title="Очистить окно"
+                                                alt="Очистить окно">[x]</a>
+                                                <th class="r">
+                                                    <img src="http://www.the-game.ru/static/img/logo_small.gif" title="Очистить страницу">
+                                                    <tr>
+                                                        <td colspan=4 class="i">
+                                                            <textarea id="t2"></textarea>
+                            </table>
+                            <tr height=25>
+                                <td colspan=3>
+                                    <table>
+                                        <tr>
+                                            <td class="s">
+                                                <td class="m">
+                                                    <a href="javascript:op_facio()">Форматировать лог »</a>
+                                                    <td class="s">Версия 2584&nbsp;
+                                                        <img src="http://www.the-game.ru/static/img/logo/31/ico_dip_self.gif"
+                                                        style="margin-bottom:-4">&nbsp;Lord Locus</table>
+        </table>
+<script type="text/javascript" src="/ga.js"></script>
+    </body>
+
+</html>
+<script type="text/javascript">
+    op_initio()
+</script>
