@@ -1,35 +1,29 @@
-!Build/
-.last_cover_stats
-/META.yml
-/META.json
-/MYMETA.*
-*.o
-*.pm.tdy
-*.bs
+### Jekyll ###
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
 
-# Devel::Cover
-cover_db/
+### KomodoEdit ###
+*.komodoproject
+.komodotools
 
-# Devel::NYTProf
-nytprof.out
+### TortoiseGit ###
+# Project-level settings
+/.tgitconfig
 
-# Dizt::Zilla
-/.build/
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
 
-# Module::Build
-_build/
-Build
-Build.bat
+# Dump file
+*.stackdump
 
-# Module::Install
-inc/
+# Folder config file
+[Dd]esktop.ini
 
-# ExtUtils::MakeMaker
-/blib/
-/_eumm/
-/*.gz
-/Makefile
-/Makefile.old
-/MANIFEST.bak
-/pm_to_blib
-/*.zip
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
