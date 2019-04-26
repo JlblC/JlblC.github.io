@@ -22,16 +22,16 @@ $topnav-hover: #ddd
     
 .flexdiv
     display: flex
+    flex-wrap: wrap
     justify-content: space-around
+    
   
 //   убрать  
 
 .columns 
     padding: 8px
-    
-.price:hover 
-    box-shadow: 0 8px 12px 0 rgba(0,0,0,0.2)
-    
+    width: 300px
+       
 .price 
     list-style-type: none
     border: 1px solid #eee
@@ -39,6 +39,9 @@ $topnav-hover: #ddd
     padding: 0
     -webkit-transition: 0.3s
     transition: 0.3s
+    
+    &:hover 
+        box-shadow: 0 8px 12px 0 rgba(0,0,0,0.2)
   
     .header 
         background-color: #111
