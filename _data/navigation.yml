@@ -1,9 +1,9 @@
 main:
-  - title: "Компания"
+  - title: "РљРѕРјРїР°РЅРёСЏ"
     url: /company
-  - title: "Услуги"
+  - title: "РЈСЃР»СѓРіРё"
     url: /services
-  - title: "Портфолио"
+  - title: "РџРѕСЂС‚С„РѕР»РёРѕ"
     url: /portfolio
-  - title: "Контакты"
+  - title: "РљРѕРЅС‚Р°РєС‚С‹"
     url: /contacts
