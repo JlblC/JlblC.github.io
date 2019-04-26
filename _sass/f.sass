@@ -1,0 +1,24 @@
+$topnav-bg: #333
+$topnav-hover: #ddd
+
+.topnav
+    position: sticky
+    top: 0
+    background-color: $topnav-bg
+    display: flex
+    
+    
+    a
+        display: block
+        color: #f2f2f2
+        text-decoration: none
+    a:hover
+        background-color: $topnav-hover
+
+.active
+    background-color: #4CAF50
+    
+@media screen and (max-width: 600px) 
+  .topnav a:not(:first-child)
+    display: none
+        

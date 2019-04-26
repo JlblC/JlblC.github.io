@@ -1,2 +1,5 @@
 locale: "ru-RU"
 timezone: Europe/Moscow
+sass:
+    sass_dir: _sass
+    style: compressed

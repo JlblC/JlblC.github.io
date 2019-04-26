@@ -1,7 +1,9 @@
 main:
-  - title: "About"
-    url: /about
-  - title: "Item2"
-    url: /about
-  - title: "Item3"
-    url: /about
+  - title: "Компания"
+    url: /company
+  - title: "Услуги"
+    url: /services
+  - title: "Портфолио"
+    url: /portfolio
+  - title: "Контакты"
+    url: /contacts
