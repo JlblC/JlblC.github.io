@@ -3,7 +3,7 @@ layout: main
 title: "test page"
 place: "z"
 ---
-<div class="">
+<div class="flexdiv">
 <div class="columns">
   <ul class="price">
     <li class="header">Basic</li>
