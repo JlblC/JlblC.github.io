@@ -3,7 +3,7 @@ layout: main
 title: "test page"
 place: "z"
 ---
-
+<div class="">
 <div class="columns">
   <ul class="price">
     <li class="header">Basic</li>
@@ -39,7 +39,7 @@ place: "z"
     <li class="grey"><a href="#" class="button">Sign Up</a></li>
   </ul>
 </div>
-<br>
+</div>
 
 # Lorem ipsum
 
