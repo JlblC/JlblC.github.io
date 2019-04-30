@@ -3,17 +3,17 @@ layout: default
 title: "test page"
 place: "z"
 ---
-<div style=" background-image: url(/img/garden.jpg);">
+<div class="garden" style="height: 40vh;">
 <h2>Здесь какой то красивый блок,</h2> мотивирующий согласовывать у меня и сотрудничать со мной на эту тему
 </div>
 <hr>
 
 <h2>Мы предлагаем Вам полный комплекс услуг на лучшем уровне</h2>
 <div class="flexdiv">
-<div class="circle">Проектирование</div>
-<div class="circle">Дизайн</div>
-<div class="circle">Согласование</div>
-<div class="circle">Ремонт</div>
+<div class="garden circle">Проектирование</div>
+<div class="garden circle">Дизайн</div>
+<div class="garden circle">Согласование</div>
+<div class="garden circle">Ремонт</div>
 </div>
 <hr>
 <h2>Наши работы</h2>
