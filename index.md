@@ -3,8 +3,8 @@ layout: default
 title: "test page"
 place: "z"
 ---
-<div class="garden" style="height: 40vh;">
-<h2>Здесь какой то красивый блок,</h2> мотивирующий согласовывать у меня и сотрудничать со мной на эту тему
+<div class="garden" style="height: 40vh;     padding: 1px;">
+<h2 sytyle="text-shadow: 0px 0px 7px #000;">Здесь какой то красивый блок,</h2> мотивирующий согласовывать у меня и сотрудничать со мной на эту тему
 </div>
 
 
