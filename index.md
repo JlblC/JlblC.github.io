@@ -16,13 +16,15 @@ place: "z"
 <div class="garden circle">Ремонт</div>
 </div>
 <hr>
+<div class="lightbg">
 <h2>Наши работы</h2>
 Здесь лента на которой едут красивые картинки, в рамке с названием обьектов (типа шоколадница, кофикс, пятерочка  и т.д.
+</div>
 <hr>
 
 <h2>Здесь блок с ценами как то очень доходчиво</h2>
 
-<div class="flexdiv">
+<div class="flexdiv lightbg">
 <div class="columns">
   <ul class="price">
     <li class="header">Basic</li>
