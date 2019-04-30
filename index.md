@@ -6,9 +6,9 @@ place: "z"
 <div class="garden" style="height: 40vh;">
 <h2>Здесь какой то красивый блок,</h2> мотивирующий согласовывать у меня и сотрудничать со мной на эту тему
 </div>
-<hr>
 
-<h2>Мы предлагаем Вам полный комплекс услуг на лучшем уровне</h2>
+
+<h2 class="lightbg">Мы предлагаем Вам полный комплекс услуг на лучшем уровне</h2>
 <div class="flexdiv">
 <div class="garden circle">Проектирование</div>
 <div class="garden circle">Дизайн</div>
@@ -60,5 +60,10 @@ place: "z"
     <li class="grey"><a href="#" class="button">Sign Up</a></li>
   </ul>
 </div>
+</div>
+
+<hr>
+<div>
+  <h2 class="lightbg> Кто мы:   фото, биография, может со временем и видео)))</h2>
 </div>
 
