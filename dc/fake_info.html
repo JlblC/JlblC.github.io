@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html><head><title>DC set fake info</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script>
+	function parsehash() {
+	var result={},a=[],pairs=window.location.hash.slice(1).split('&');
+	for (var i=0; i < pairs.length; i++) {
+		a = pairs[i].split('=');
+		result[a[0]]=a[1];		
+	}
+	return result;
+}
+
+// создание элемента
+function $e(tag, parent, className, attributes,content,style) {
+	var result = document.createElement(tag);
+	if (className)  result.className = className;
+	if (parent) parent.appendChild(result);
+	if (attributes) for (var a in attributes) result.setAttribute(a, attributes[a]);
+	if (content) result.innerHTML = content;
+	if (style) for (var a in style) result.style[a] = style[a];
+	return result;
+}
+</script>
+<script type="text/javascript">
+	$e('link',document.head,null,{type:'text/css',rel:'stylesheet',
+		href:((window.location.protocol.toString().search('file')!= -1)?'../Public':'')+'/frombootstrap.css'});
+
+var it,gobutton,cb_oemts,cb_owner,dvg,dvo;
+var Planets=[];
+var testdata='x;y;o;e;m;t;s;owner\n503;503;3;3;3;3;3;jlblc\n504;504;4;4;4;4;4;jlblc'
+// строим дом
+function main(){
+	var body=document.getElementsByTagName('body')[0];
+	$e('h3',body,null,null,'Загрузка fake info на платный аккаунт',{'text-align':'center'});
+	$e('div',body,null,null,'Аккаунт, на который производится загрузка, должен быть открыт в другой вкладке в этом же браузере.',{'text-align':'center'});
+	var div1=$e('div',body,'row show-grid');
+	var div2=$e('div',div1,'span2 well offset1');
+	var div3=$e('div',div2,'input');
+	var ul=$e('ul',div3,'inputs-list');
+	cb_oemts=$e('input',$e('label',$e('li',ul),null,null,'<span>O,E,M,T,S</span>'),null,{type:'checkbox',checked:'true'});
+	cb_owner=$e('input',$e('label',$e('li',ul),null,null,'<span>Владелец</span>'),null,{type:'checkbox'});
+	gobutton=$e('input',div2,'btn small',{type:'button',value:'Go!',onClick:'go()'});
+	var div4=$e('div',div1,'span12');
+	it=$e('textarea',div4,'xxlarge',{id:'importtxt',placeholder:'x;y[;o;e;m;t;s][;owner]',spellcheck:'false',rows:'7'},'',{'width':'100%'});
+	$e('hr',body);
+	dvg=$e('div',body,'row show-grid');
+	$e('hr',body);
+	dvo=$e('div',body,'row show-grid');	
+}
+
+function go(){
+	var NextPlanet;
+	gobutton.disabled=true;
+	var ta=it.value.split(/\r*\n/);
+	var plpar='';
+	for(var i=0; i<ta.length; i++) {                 
+     	var pp=ta[i].toLowerCase().split(';');
+     	if (!plpar) { plpar=pp; } 
+ 		else {
+     		NextPlanet={};
+     		for (var j=0; j<pp.length; j++){
+     			NextPlanet[plpar[j]]=pp[j];
+     		}
+     		Planets.push(NextPlanet);	
+ 		}
+     }    
+
+	if (cb_oemts.checked) {
+		for(var i=0; i<Planets.length; i++){
+			var s='http://www.the-game.ru/frames/planetinfo/on/planet/?planetid='+Planets[i].x+':'+Planets[i].y
+				+'&action=store_planet_fake_stats';
+				for(var j=0;j<5;j++) {
+					var b=['o','e','m','t','s'][j];
+					s+='&'+b+'='+Planets[i][b];
+				}
+			$e('img',dvg,'c10x10',{src:s,alt:"x"});
+			}
+		}
+	
+	if (cb_owner.checked) {
+		for(var i=0; i<Planets.length; i++){
+			var s='http://www.the-game.ru/frames/planetinfo/on/planet/?planetid='+Planets[i].x+':'+Planets[i].y
+				+'&action=store_planet_fake_owner&new_user='+Planets[i].owner+'&';				
+			$e('img',dvo,'c10x10',{src:s,alt:"z"});			
+		}
+	}
+	alert('Дождитесь полной прогрузки!');
+}
+</script></head>
+<body onload="main()"><noscript><span>_ Your browser does not support JavaScript! _</span></noscript></body></html>
