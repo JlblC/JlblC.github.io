@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html><head><title> race gen &beta; </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script>
+	function parsehash() {
+	var result={},a=[],pairs=window.location.hash.slice(1).split('&');
+	for (var i=0; i < pairs.length; i++) {
+		a = pairs[i].split('=');
+		result[a[0]]=a[1];		
+	}
+	return result;
+}
+
+// создание элемента
+function $e(tag, parent, className, attributes,content,style) {
+	var result = document.createElement(tag);
+	if (className)  result.className = className;
+	if (parent) parent.appendChild(result);
+	if (attributes) for (var a in attributes) result.setAttribute(a, attributes[a]);
+	if (content) result.innerHTML = content;
+	if (style) for (var a in style) result.style[a] = style[a];
+	return result;
+}
+</script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+	// Load the Visualization API and the piechart package.
+    google.load('visualization','1.0', {'packages': ['table'],'nocss':true});
+      
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.setOnLoadCallback(main);
+	console.log('header');
+	
+	$e('link',document.head,null,{type:'text/css',rel:'stylesheet',href:((window.location.protocol.toString().search('file')!= -1)?'../Public':'')+'/frombootstrap.css'});
+
+var theAbacus=[[ -0.20 ,  2.00 ,  0.00 ,  1.00 , -0.20 ,  0.12 ,  0.00 ,  0.00] , 
+               [  0.02 , -0.90 ,  0.00 ,  0.30 ,  0.25 ,  0.60 ,  0.00 , -0.06] , 
+               [  0.13 ,  0.05 , -0.37 ,  0.13 ,  0.09 , -0.12 , -0.14 ,  0.10] , 
+               [  0.00 , -0.20 , -0.12 , -0.46 ,  0.00 , -0.26 ,  0.60 , -0.20] , 
+               [ -0.30 ,  0.27 , -0.20 , -0.20 ,  0.15 , -0.53 ,  0.45 ,  0.20] , 
+               [  0.20 ,  0.00 ,  0.00 , -0.27 , -0.70 , -0.60 , -0.10 ,  0.00] , 
+               [  0.10 , -0.20 ,  0.40 , -0.60 ,  0.10 ,  0.30 , -0.30 , -0.10] , 
+               [  0.12 , -0.15 ,  0.11 ,  0.12 ,  0.10 ,  0.00 ,  0.50 , -0.10] , 
+               [ -0.60 ,  0.21 , -0.20 , -0.38 ,  0.20 , -0.30 ,  0.20 ,  0.60] , 
+               [ -0.50 ,  0.00 ,  0.20 ,  0.10 ,  0.00 , -0.45 ,  0.80 ,  0.68] , 
+               [  0.06 ,  0.00 ,  0.20 ,  0.10 ,  0.35 , -0.18 , -0.50 ,  0.60] , 
+               [  0.09 ,  0.30 , -0.10 ,  0.00 , -0.16 ,  0.25 ,  0.42 , -0.65] , 
+               [ -0.45 ,  0.00 ,  0.00 , -0.25 , -0.09 , -0.20 , -0.24 , -0.60] ];
+			   
+var newAbacus=[[ -0.20 ,  2.00 ,  0.00 ,  1.00 , -0.20 ,  0.12 ,  0.00 ,  0.00] , 
+               [  0.02 , -0.90 ,  0.00 ,  0.30 ,  0.25 ,  0.60 ,  0.00 , -0.06] , 
+               [  0.13 ,  0.05 , -0.37 ,  0.13 ,  0.09 , -0.12 , -0.14 ,  0.10] , 
+			   [  0.20 ,  0.00 , -0.10 ,  0.15 , -0.10 ,  0.20 , -0.25 , -0.20] , // дальность
+               [  0.00 , -0.20 , -0.12 , -0.46 ,  0.00 , -0.26 ,  0.60 , -0.20] , 
+               [ -0.30 ,  0.27 , -0.20 , -0.20 ,  0.15 , -0.53 ,  0.45 ,  0.20] , // цены
+               [  0.20 ,  0.00 ,  0.00 , -0.27 , -0.70 , -0.60 , -0.10 ,  0.00] , // наука
+               [  0.10 , -0.20 ,  0.40 , -0.60 ,  0.10 ,  0.30 , -0.30 , -0.10] , 
+               [  0.12 , -0.15 ,  0.11 ,  0.12 ,  0.10 ,  0.00 ,  0.50 , -0.10] , //скор воен
+               [ -0.60 ,  0.21 , -0.20 , -0.38 ,  0.20 , -0.30 ,  0.20 ,  0.60] , // прочность
+               [ -0.50 ,  0.00 ,  0.20 ,  0.10 ,  0.00 , -0.45 ,  0.80 ,  0.68] , // лазеры
+			   [ -0.50 ,  0.00 ,  0.80 ,  0.30 , -0.70 ,  0.40 ,  0.25 , -0.15] , // ракеты
+               [  0.06 ,  0.00 ,  0.20 ,  0.10 ,  0.35 , -0.18 , -0.50 ,  0.60] , 
+			   
+			   [  0.03 , -0.10 , -0.20 ,  0.05 ,  0.17 ,  0.09 , -0.25 ,  0.30], // вторичка
+			   [  0.05 ,  0.00 ,  0.05 ,  0.10 ,  0.10 ,  0.20 ,  0.60 , -0.60] , // кредиты
+			   [ -0.20 , -0.60 , -0.16 , -0.16 , -0.16 , -0.16 , +0.16 , +0.44] , // ВНК
+			   [  0.00 ,  0.00 ,  0.00 ,  0.00 ,  0.00 ,  0.00 ,  0.00 ,  0.00] , // скорость ВНК
+			   
+			   
+               [  0.09 ,  0.30 , -0.10 ,  0.00 , -0.16 ,  0.25 ,  0.42 , -0.65] , // невидимость
+               [ -0.45 ,  0.00 ,  0.00 , -0.25 , -0.09 , -0.20 , -0.24 , -0.60] 
+			   ];
+
+	  
+var primlabels=["Зануды","Романтики",
+	"Хрупкие","Живучие",
+	"Странники","Оседлые",
+	"Долгожители","Однодневки",
+	"Умники","Плодовитые",
+	"Древние","Молодые",
+	"Торгаши","Вояки",
+	"Крохи","Великаны"];
+
+var seclabels=[
+	"Комфортная температура",
+	"Бонус прироста популяции",
+	"Скорость и дальность полёта",
+	"Защитные системы",
+	"Цены",
+	"Наука",
+	"Скорость мирного производства",
+	"Скорость военного производства",
+	"Прочность юнитов и построек",
+	"Повреждения",
+	"Добыча ресурсов",
+	"Невидимость",
+	"Обнаружение невидимок"];
+
+var newseclabels=[
+	"Температура",
+	"Прирост популяции",
+	"Скорость полёта",
+	"Дальность полёта",
+	"Защитные системы",
+	"Цены",
+	"Наука",
+	"Скорость мирного",
+	"Скорость военного",
+	"Прочность",
+	"Повреждения лазерами",
+	"Повреждения ракетами",
+	"Добыча первички",
+	"Добыча вторички",
+	"Добыча кредитов",
+	"Бонус ВНК",
+	"Скорость роста ВНК",
+	"Невидимость",
+	"Обнаружение"];
+	
+
+var globalvars={}; 
+
+var datasecpar,dataraceslist;
+var sectable,raceslisttable,terttable;
+
+
+var barformatter,titlformatter;
+var view;
+
+var calcconst={};
+
+calcconst.abac=parsehash().secretparam=='new'?newAbacus:theAbacus;
+calcconst.seclabels=parsehash().secretparam=='new'?newseclabels:seclabels;
+var varnames=parsehash().secretparam=='new'?['tmp','grw','fsp','fds','dfn','prc','scn','pcf','war','hp','las','rok','mnp','mns','mnc','vc','vs','stl','dtc']:['t','p','f','d','c','i','b1','b2','h','a','m','s1','s2'];
+var formulas=parsehash().secretparam=='new'?['новый ЕТУ','mnc*scn','Наукокредиты','mnc*vc','скорость ст.зонда','fsp*6/pow(15+4,0.66)','дальность ст.зонда','fds*1.3*pow(30,0.49*2)/pow(15+4,0.49)']:['ЕТУ','i*m','скорость ст.зонда','f*6/pow(15+4,0.66)','дальность ст.зонда','f*1.3*pow(30,0.49*2)/pow(15+4,0.49)'];
+
+calcconst.minpar=[];
+calcconst.maxpar=[];
+
+ for (var i=0; i<calcconst.abac.length; i++) 
+     { calcconst.maxpar[i]=0;
+      for (var j=0; j<calcconst.abac[0].length; j++) 		
+        { calcconst.maxpar[i]+=Math.abs(calcconst.abac[i][j]);	 
+		};
+		calcconst.maxpar[i]*=49;
+	   calcconst.minpar[i]=Math.abs(calcneg(-calcconst.maxpar[i],(i!=0)));
+	  }
+  
+function calcneg(val,notemp){
+	return (val<0)?((notemp)?(100*val)/(100-val):(200*val)/(200-val)):val;
+}
+function formatpar(par,notemp){
+	return notemp?Math.round(10*par)/10+'%':Math.round(100 * 10 * (1 + par/100)) / 100 + "°";
+}
+
+function cutword(text){
+var ta=text.split(/\s/);
+  var result='';
+for (var i=0;i<ta.length;i++) {
+   //console.log(ta[i]);
+   if (ta[i].length<7) result+=ta[i]
+         else {
+		        for(var j=3;j<ta[i].length-1;j++) if ('бвгджзклмнпрстфхцчшщ'.search(ta[i].charAt(j))!=-1) break;
+				result+=ta[i].substring(0,j+1)+'.';
+		      }
+	result+=' ';
+   }
+   //console.log(result);
+return result.replace(/\s+$/, '');
+}
+
+
+// Events
+
+
+function setsliders(a){
+for (var i=0;i<8;i++) globalvars["primnumber"+i].innerHTML=globalvars["primslider"+i].value=a[i];
+calculate();
+}
+
+function addtotable(){
+var a=[];
+var b=[];
+	
+dataraceslist.addRow();
+var NumberOfRows=dataraceslist.getNumberOfRows();
+console.log(NumberOfRows);
+for (var i=0;i<calcconst.seclabels.length;i++) 
+    {
+	  console.log(dataraceslist.setCell(NumberOfRows-1,i,datasecpar.getValue(i,2),datasecpar.getFormattedValue(i,2)));
+    }
+raceslisttable.draw(dataraceslist, {allowHtml: true, showRowNumber: false});
+}
+
+function ondblclick1(event){
+  console.log(event.target.cellIndex,' ',event.target.parentElement.rowIndex);
+
+if (event.target.cellIndex==3||event.target.cellIndex==4) {
+    var n = event.target.parentElement.rowIndex-1;
+ 	var paramsign=event.target.cellIndex-3.5;
+	    paramsign=paramsign/Math.abs(paramsign);
+	  console.log(paramsign);
+	 var par=[];
+    for (var i=0;i<calcconst.abac[0].length;i++)
+	   {
+	      if (calcconst.abac[n][i]==0) par[i]=50
+		           else par[i]=(calcconst.abac[n][i]*paramsign>0) ? 99 : 1;
+	   }
+	   setsliders(par);
+	   
+	}
+}
+
+function ondblclick2(event){
+}
+
+function calcsecpar(){
+}
+
+function calculate(){
+var par;
+var race1={};
+for (var i=0; i<calcconst.abac.length; i++) {
+     par=0;
+
+     for (var j=0; j<calcconst.abac[0].length; j++) par+=(globalvars["primslider"+j].value-50)*calcconst.abac[i][j];
+	 race1[varnames[i]]=par/100+1;
+     par=calcneg(par,(i!=0));
+     
+     //console.log(i,par);
+	 if (par<0) datasecpar.setCell(i,3,par/calcconst.minpar[i]); else datasecpar.setCell(i,3,par/calcconst.maxpar[i]);
+	 datasecpar.setCell(i,2,par,formatpar(par,(i!=0)));
+     
+    }
+	barformatter.format(datasecpar, 3); // Apply formatter to column
+	
+	sectable.draw(view, {allowHtml: true, showRowNumber: false, sort:'disable'});
+	document.querySelector("#divsecpar table").ondblclick=ondblclick1;
+	for (var cycle_unique=1; cycle_unique<terttable.rows.length;cycle_unique++)
+	  {  
+	      with (Math) with (race1) terttable.rows[cycle_unique].cells[1].innerHTML=(+eval(terttable.rows[cycle_unique].cells[2].innerHTML)).toPrecision(3);
+	   }
+}
+
+
+function main(){
+	// Убиваем внедренный гугловский table.css
+	var arr=document.head.getElementsByTagName('link');
+	for(var i=0; i<arr.length; i++)	if (/google.*css$/i.test(arr[i].href)) arr[i].parentNode.removeChild(arr[i]);
+
+    //console.log('main');
+	// таблица вторичных параметров
+    datasecpar = new google.visualization.DataTable();
+	
+	datasecpar.addColumn('number', '№');	// 0
+	datasecpar.addColumn('string', 'Параметр');	// 1
+	datasecpar.addColumn('number', 'Зн.'); // 2
+	datasecpar.addColumn('number', 'Столбик');  // 3
+	datasecpar.addColumn('string', 'min');      // 4
+	datasecpar.addColumn('string', 'max');      // 5 
+	datasecpar.addColumn('string', 'varname');  // 6 
+	
+	datasecpar.addRows(calcconst.seclabels.length);
+	
+	for (var i=0; i<calcconst.seclabels.length; i++) 
+	      { datasecpar.setCell(i,0,i);
+		    datasecpar.setCell(i,1,calcconst.seclabels[i])
+			datasecpar.setCell(i,4,formatpar(-calcconst.minpar[i],i!=0));
+			datasecpar.setCell(i,5,formatpar(calcconst.maxpar[i],i!=0));
+			datasecpar.setCell(i,6,varnames[i]);
+		  };
+    barformatter = new google.visualization.TableBarFormat({width: 80, showValue:false, max:1, min:-1,drawZeroLine:false});
+	titlformatter=new google.visualization.PatternFormat('<span title={1}>{0}</span>');	
+    view = new google.visualization.DataView(datasecpar);
+    view.setColumns([1,2,3,4,5]); // Create a view 
+    titlformatter.format(datasecpar,[1,6]);
+	
+    
+	// таблица списка рас 
+	dataraceslist = new google.visualization.DataTable();
+	for (var i=0; i<calcconst.seclabels.length; i++) dataraceslist.addColumn('number',cutword(calcconst.seclabels[i]));
+	
+	
+	
+var body=document.getElementsByTagName('body')[0];
+var div1=$e('div',body,'row show-grid');
+var div2=$e('div',div1,'span6');
+
+var div3=$e('div',div1,'span11 offset1',{id:'divsecpar'});
+var div4=$e('div',div1,'span6');
+	
+var div5=$e('div',body,'row show-grid');	
+        $e('div',div5,'span1');	 
+var div6=$e('div',div5,'span10');	
+		$e('div',div5,'span1');	 	
+
+sectable = new google.visualization.Table(div3);
+raceslisttable = new google.visualization.Table(div6);
+raceslisttable.draw(dataraceslist,{allowHtml: true, showRowNumber: false,sort:'enable'});
+
+var f1 = $e('form',div2);
+var t1= $e('table',f1,'condensed-table');
+var tb1=$e('tbody',t1);
+
+    
+  
+for(var i=0; i<8; i++) {
+	var r1 = $e('tr',tb1);
+
+	var d1 = $e('td',r1,null,null,primlabels[2*i]);
+	var d2 = $e('td',r1);
+	var d3 = $e('td',r1,null,null,primlabels[2*i+1]);
+	var d4 = $e('td',r1);
+
+	var i2=$e('span',d4,null,{name:"primnumber"+i,id:"primnumber"+i,contenteditable:"true"},'50');
+
+	var i1=$e('input',d2,null,{type:"range",value:"50",min:"1",max:"99",step:"1",name:"primslider"+i,id:"primslider"+i,onchange:"globalvars['"+i2.id+"'].innerHTML=this.value;calculate()"});
+		i2.setAttribute("onblur","globalvars['"+i1.id+"'].value=this.innerHTML;calculate()");
+}
+
+
+// var t2= $e('table',div3,'condensed-table');
+// var tb2=$e('tbody',t2);
+
+// for (var i=0; i<13; i++) {
+// var r1 = $e('tr',tb2);
+// var d1 = $e('td',r1,null,null,seclabels[i]);
+// var d2 = $e('td',r1);
+//var s1 = $e('span',d2,null,{id:"secpar"+i});}
+//
+
+$e('a',f1,null,{href:'#',onClick:'setsliders([50,50,50,50,50,50,50,50])'},'Grayers');$e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([99, 1,99,99,99,99, 1,99])'},'капитолий');  $e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([ 1,29,99,99,99, 1,21,99])'},'Blades');  $e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([ 1,78,99, 1,99, 1, 1,99])'},'Hammers');  $e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([99,39,30,99,99, 1, 1,99])'},'Cybers');  $e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([99,99, 1,99, 1, 1, 1,99])'},'Летун');  $e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([99, 1, 1,99,99,99, 1,99])'},'геолог'); $e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([51, 1,99, 1, 1, 1,99,99])'},'ПСН 99');$e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([51, 1,99,99, 1, 1,99,99])'},'ПСН 108');$e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([ 1,99, 1, 1, 1, 1,99,99])'},'Хитовик');$e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'setsliders([99, 1, 1, 1, 1, 1,99, 1])'},'Пылевик');$e('br',f1);
+
+
+$e('br',f1);$e('br',f1);
+$e('a',f1,null,{href:'#',onClick:'addtotable()'},'&darr; в таблицу, для сравнения &darr;');
+
+	terttable=$e('table',div4,'condensed-table');
+	terttable.ondblclick=ondblclick2;
+var th2=$e('thead',terttable);
+var tr1=$e('tr',th2);
+        $e('th',tr1,null,null,'название');
+		$e('th',tr1,null,null,'значение');
+		$e('th',tr1,null,null,'формула');
+		$e('th',tr1,null,null,'min');
+		$e('th',tr1,null,null,'max');
+var tb2=$e('tbody',terttable);
+
+for(var i=0;i<formulas.length;i++){
+	var r1 = $e('tr',tb2);
+	$e('td',r1,null,{contenteditable:"true"},formulas[i]);
+	$e('td',r1);
+	$e('td',r1,null,{contenteditaыble:"true"},formulas[++i]);
+	$e('td',r1);
+	$e('td',r1);
+}
+
+for (var i=0;i<3;i++){
+	r1 = $e('tr',tb2);
+	$e('td',r1,null,{contenteditable:"true"},'edit me!');$e('td',r1);$e('td',r1,null,{contenteditable:"true"},'0');$e('td',r1);$e('td',r1);
+}
+
+var elems=document.getElementsByTagName('*');
+for(var i=0; i<elems.length; i++) if(elems[i].id) globalvars[elems[i].id]=elems[i];
+calculate();
+
+
+//document.querySelector("table.google-visualization-table-table").className='condensed-table';
+
+}
+	
+
+</script></head>
+<body>
+	<noscript><span>_ Your browser does not support JavaScript! _</span></noscript>
+	<div id="helpdiv"><div id="helpico">?</div>
+	Можно получить расу с предельными значеними параметров совершив двойной клик на значениях в min,max столбцах.<br><br>
+	В нижней таблице сравнения работает сортировка, кликайте по ячейкам шапки.<br><br>
+	Названия переменных для формул см. во всплывающей подсказке к ячейкам в столбике "Параметр"<br><br>
+	</div>
+</body></html>
